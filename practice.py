@@ -1,4 +1,6 @@
 # 未完成***
+# 存在问题，可能是网页不规范导致
+# 页面跳转问题没有解决
 
 # 目标：利用Selenium爬取优品ppt的ppt
 # 并用pyquery解析得到的ppt的名称，页数，查看人数，静态或动态
@@ -11,22 +13,18 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from pyquery import PyQuery as pq
+from selenium.webdriver import ActionChains
 from urllib.parse import quote
 
 MONGO_URL = 'localhost'
 MONGO_DB = 'ppt'
 MONGO_COLLECTION = 'products'
 
-KEYWORD = 'jingmei'
-
-MAX_PAGE = 4
+MAX_PAGE = 2
 
 SERVICE_ARGS = ['--disk-cache=true']
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-browser = webdriver.Chrome(chrome_options=chrome_options)
-
+browser = webdriver.Chrome()
 wait = WebDriverWait(browser, 10)
 client = pymongo.MongoClient(MONGO_URL)
 db = client[MONGO_DB]
@@ -38,26 +36,22 @@ def index_page(page):
         url = 'http://www.ypppt.com/moban/jingmei/'
         browser.get(url)
         if page > 1:
-            submit = browser.find_element(By.LINK_TEXT, '下一页')
-            submit.click()
-        wait.until(
-          wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.posts.clear li')))
-        )
+            submit = browser.find_element_by_link_text('2')
+            actions = ActionChains(browser)
+            actions.click(submit)
         get_products()
     except TimeoutException:
         print('error')
 
 
 def get_products():
-    lis = browser.find_elements(By.CSS_SELECTOR, '.posts.clear li')
-    for li in lis:
-        product = {
-            'title': li.find('p-title').text(),
-            'left': li.find('left').text(),
-            'right': li.find('right').text(),
-        }
-        print(product)
-        save_to_monge(product)
+    # 当前页面商品
+    html = browser.page_source
+    doc = pq(html)
+    items = doc('.wrapper .posts.clear li').items()
+    print(type(items))
+    for item in items:
+        print(type(item))
 
 
 def save_to_monge(result):
