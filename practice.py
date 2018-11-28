@@ -49,8 +49,6 @@ def index_page(page):
 
 
 def get_products():
-    html = browser.page_source
-    doc = pq(html)
     lis = browser.find_elements(By.CSS_SELECTOR, '.posts.clear li')
     for li in lis:
         product = {
