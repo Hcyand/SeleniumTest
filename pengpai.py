@@ -1,4 +1,4 @@
-# 抓取澎湃新闻练习
+# 抓取澎湃新闻练习 -- 完成
 # 澎湃新闻有下拉更新，交互练习
 
 from selenium import webdriver

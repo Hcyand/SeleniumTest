@@ -19,7 +19,7 @@ html = """
 
 from pyquery import PyQuery as pq
 doc = pq(html)
-lis = doc('#hhh .eee.sss li').items()
+lis = doc('.eee.sss li').items()
 print(type(lis))
 for li in lis:
     print(li)

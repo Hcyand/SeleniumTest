@@ -35,10 +35,10 @@ def index_page(page):
     try:
         url = 'http://www.ypppt.com/moban/jingmei/'
         browser.get(url)
-        if page > 1:
-            submit = browser.find_element_by_link_text('2')
-            actions = ActionChains(browser)
-            actions.click(submit)
+        # if page > 1:
+            # submit = browser.find_element_by_link_text('2')
+            # actions = ActionChains(browser)
+            # actions.click(submit)
         get_products()
     except TimeoutException:
         print('error')
@@ -48,10 +48,12 @@ def get_products():
     # 当前页面商品
     html = browser.page_source
     doc = pq(html)
-    items = doc('.wrapper .posts.clear li').items()
-    print(type(items))
+    items = doc('#wrapper .posts li').items()
     for item in items:
-        print(type(item))
+        product = {
+            'biao': item.find('.clear .left').text(),
+        }
+        print(product)
 
 
 def save_to_monge(result):
